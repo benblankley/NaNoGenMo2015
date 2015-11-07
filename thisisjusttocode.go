@@ -104,7 +104,7 @@ func main() {
 		s2 := fmt.Sprint("they were ", m.Adjs[rand.Intn(len(m.Adjs))], " \n")
 		io.WriteString(file, s2)
 		io.WriteString(file, "so sweet\n")
-		io.WriteString(file, "and so cold\n")
+		io.WriteString(file, "and so good\n")
 
 	}
 
