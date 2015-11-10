@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"github.com/signintech/gopdf"
 )
 
 type AdjectivesType struct {
@@ -114,18 +115,60 @@ func main() {
 
 	fmt.Println("Writing to file : " + filename)
 
+	// add for pdf support
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{Unit: "pt", PageSize: gopdf.Rect{W: 595.28, H: 841.89}}) //595.28, 841.89 = A4
+
+	err = pdf.AddTTFFont("DejaVuSerif", "./src/github.com/signintech/gopdf/gopdftest/ttf/DejaVuSerif.ttf")
+	if err != nil {
+		log.Print(err.Error())
+		return
+	}
+
+
+
+
+
 	for poemnum := 0; poemnum < 1; poemnum++ {
-		fmt.Println("**Poem #" + strconv.Itoa(poemnum+1))
 
-		io.WriteString(file, "\n**Poem #"+strconv.Itoa(poemnum+1)+"\n")
+	// add for pdf support
+		pdf.AddPage()
+		pdf.SetLineWidth(2)
+		pdf.Line(10, 400, 585, 400)
+		err = pdf.SetFont("DejaVuSerif", "", 14)
+		if err != nil {
+			log.Print(err.Error())
+			return
+		}
 
-		s3 := fmt.Sprint("I have ", q.Verbs[rand.Intn(len(q.Verbs))], " \n")
-		io.WriteString(file, s3)
-		s0 := fmt.Sprint("the ", p.Fruits[rand.Intn(len(p.Fruits))], " \n")
-		io.WriteString(file, s0)
+		// output status to screen
+		fmt.Println("Poem #" + strconv.Itoa(poemnum+1))
+
+		io.WriteString(file, "\nPoem #"+strconv.Itoa(poemnum+1)+"\n")
+		pdf.Cell(nil, "Poem #"+strconv.Itoa(poemnum+1))
+		pdf.Br(20)
+
+
+		s3 := fmt.Sprint("I have ", q.Verbs[rand.Intn(len(q.Verbs))])
+		io.WriteString(file, fmt.Sprint(s3, " \n"))
+		pdf.Cell(nil, s3)
+		pdf.Br(20)
+
+		s0 := fmt.Sprint("the ", p.Fruits[rand.Intn(len(p.Fruits))])
+		io.WriteString(file, fmt.Sprint(s0, " \n"))
+		pdf.Cell(nil, s0)
+		pdf.Br(20)
+
 		io.WriteString(file, "that was in\n")
-		s1 := fmt.Sprint("the ", strings.ToLower(n.Appliances[rand.Intn(len(n.Appliances))]), " \n\n")
-		io.WriteString(file, s1)
+		pdf.Cell(nil, "that was in")
+		pdf.Br(20)
+
+		s1 := fmt.Sprint("the ", strings.ToLower(n.Appliances[rand.Intn(len(n.Appliances))]))
+		io.WriteString(file, fmt.Sprint(s1, "\n\n"))
+		pdf.Cell(nil, s1)
+		pdf.Br(20)
+		pdf.Br(20)
+
 
 		io.WriteString(file, "and which\n")
 		io.WriteString(file, "you were probably\n")
@@ -140,6 +183,6 @@ func main() {
 		io.WriteString(file, "and so good\n")
 
 	}
-
+	pdf.WritePdf("output.pdf")
 	file.Close()
 }
