@@ -3,15 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/signintech/gopdf"
 	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
 	"strconv"
-	"time"
 	"strings"
-	"github.com/signintech/gopdf"
+	"time"
 )
 
 type AdjectivesType struct {
@@ -30,9 +30,9 @@ type FruitsType struct {
 }
 
 type VerbsType struct {
-	Description       string   `json:"description"`
-	Source            string   `json:"source"`
-	Verbs             []string `json:"resume_action_words"`
+	Description string   `json:"description"`
+	Source      string   `json:"source"`
+	Verbs       []string `json:"resume_action_words"`
 }
 
 func main() {
@@ -125,16 +125,12 @@ func main() {
 		return
 	}
 
+	for poemnum := 0; poemnum < 1800; poemnum++ {
 
-
-
-
-	for poemnum := 0; poemnum < 1; poemnum++ {
-
-	// add for pdf support
+		// add for pdf support
 		pdf.AddPage()
 		pdf.SetLineWidth(2)
-		pdf.Line(10, 400, 585, 400)
+		pdf.Line(10, 320, 585, 320)
 		err = pdf.SetFont("DejaVuSerif", "", 14)
 		if err != nil {
 			log.Print(err.Error())
@@ -147,7 +143,6 @@ func main() {
 		io.WriteString(file, "\nPoem #"+strconv.Itoa(poemnum+1)+"\n")
 		pdf.Cell(nil, "Poem #"+strconv.Itoa(poemnum+1))
 		pdf.Br(20)
-
 
 		s3 := fmt.Sprint("I have ", q.Verbs[rand.Intn(len(q.Verbs))])
 		io.WriteString(file, fmt.Sprint(s3, " \n"))
@@ -169,18 +164,40 @@ func main() {
 		pdf.Br(20)
 		pdf.Br(20)
 
-
 		io.WriteString(file, "and which\n")
+		pdf.Cell(nil, "and which")
+		pdf.Br(20)
+
 		io.WriteString(file, "you were probably\n")
+		pdf.Cell(nil, "you were probably")
+		pdf.Br(20)
+
 		io.WriteString(file, "saving\n")
+		pdf.Cell(nil, "saving")
+		pdf.Br(20)
+
 		io.WriteString(file, "for breakfast\n\n")
+		pdf.Cell(nil, "for breakfast")
+		pdf.Br(20)
+		pdf.Br(20)
 
 		io.WriteString(file, "Forgive me\n")
-		s2 := fmt.Sprint("it was ", m.Adjs[rand.Intn(len(m.Adjs))], " \n")
-		io.WriteString(file, s2)
-		s4 := fmt.Sprint("so ", m.Adjs[rand.Intn(len(m.Adjs))], " \n")
-		io.WriteString(file, s4)
+		pdf.Cell(nil, "forgive me")
+		pdf.Br(20)
+
+		s2 := fmt.Sprint("it was ", m.Adjs[rand.Intn(len(m.Adjs))])
+		io.WriteString(file, fmt.Sprint(s2, " \n"))
+		pdf.Cell(nil, s2)
+		pdf.Br(20)
+
+		s4 := fmt.Sprint("so ", m.Adjs[rand.Intn(len(m.Adjs))])
+		io.WriteString(file, fmt.Sprint(s4, " \n"))
+		pdf.Cell(nil, s4)
+		pdf.Br(20)
+
 		io.WriteString(file, "and so good\n")
+		pdf.Cell(nil, "and so good")
+		pdf.Br(20)
 
 	}
 	pdf.WritePdf("output.pdf")
